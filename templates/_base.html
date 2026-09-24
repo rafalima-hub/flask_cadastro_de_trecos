@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="base.css"><title>Cadastro de Trecos</title>
+    <title>Cadastro de Trecos</title>
+
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     
-    <header>
-        <h1>Cadastro de Trecos</h1>
+    <header class="cabeçalho">
+
+        <div class="logo">
+            Cadastro de Trecos
+        </div>
+
     </header>
     <hr>
 
-    <nav>
+    <nav class="menu">
         <a href="{{ url_for('index') }}">Início</a>
         <a href="{{ url_for('new') }}">Novo</a>
         <a href="{{ url_for('about') }}">Sobre</a>
     </nav>
     <hr>
+
+    <button class="botao">
+        Entrar
+    </button>
 
     <main>
         {# O conteúdo do template da rota aparece aqui! #}

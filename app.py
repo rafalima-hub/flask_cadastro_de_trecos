@@ -1,5 +1,6 @@
-from flask import Flask, abort, render_template
+from flask import Flask, abort, render_template, request
 import sqlite3
+import random
 
 app = Flask(__name__)
 
@@ -44,9 +45,35 @@ def view(thing_id):
         content=content
     )
 
-@app.route("/new")
+@app.route("/new", methods=['GET', 'POST'])
 def new():
-    return render_template("new.html")
+
+    sended = False
+    photo_number = random.randint(10, 999)
+    thing_name = str()
+
+    if request.method == 'POST':
+        name = request.form['name'].strip()
+        description = request.form['description'].strip()
+        location = request.form['location'].strip()
+        photo = request.form['photo'].strip()
+
+        with sqlite3.connect('database.db') as conn:
+            conn.execute("""
+                INSERT INTO thing (
+                    name, description, location, photo
+                ) VALUES (?, ? ,? ,?)
+            """, (name, description, location, photo,))
+
+            sended = True
+            thing_name = name
+
+    return render_template(
+        "new.html",
+        photo_number=photo_number,
+        thing_name=thing_name,
+        sended=sended
+    )
 
 @app.route("/about")
 def about():

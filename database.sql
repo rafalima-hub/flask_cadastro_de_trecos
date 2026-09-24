@@ -17,7 +17,7 @@ CREATE TABLE thing (
 -- 3) Cadastra alguns "profile" para experimentos iniciais --
 INSERT INTO thing
 ( name, description, location, photo ) VALUES
-( "Bandeirinhass", "Uma coisa que se acha por aí no período das festas juninas.", "Lá mesmo", "https://picsum.photos/400/300?random=1" ),
-( "Joia", "Pedaço de alguma coisa, não se sabe de quê, mas é de origem terráquea.", "Encaixotado", "https://picsum.photos/400/300?random=2" ),
-( "Nurff", "No melhor estilo 'arma infernal', mas não funciona mais. Se é que já funcionou.", "Bem perto", "https://picsum.photos/400/300?random=3" ),
-( "Sapato", "Usava quando era pequeno e não entendia pra que servia. Ainda não entendo.", "Por ai", "https://picsum.photos/400/300?random=4" );
+( "Blush", "Deixa a pele coradinha como se você tivesse acabado de voltar para praia.", "Lá mesmo", "https://picsum.photos/400/300?random=1" ),
+( "Gloss", "Ao passar nos lábios ele fica com um efeito glow perfeito.", "Encaixotado", "https://picsum.photos/400/300?random=2" ),
+( "Delineador", "Com ele você pode usar sua criatividade para transformar o seu olhar.", "Bem perto", "https://picsum.photos/400/300?random=3" ),
+( "Rímel", "Quanto mais vezes você passar nos seus cílos, mais volumoso ele irá ficar.", " Por ai " , " https://picsum.photos/400/300?random=4 ");
