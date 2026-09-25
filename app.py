@@ -4,6 +4,7 @@ import random
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
 
@@ -15,14 +16,15 @@ def index():
                 WHERE status = 'on'
                 ORDER BY created_at
         """).fetchall()
-    
+
     total = len(contents)
 
     return render_template(
         'index.html',
         contents=contents,
         total=total
-)
+    )
+
 
 @app.route('/view/<int:thing_id>')
 def view(thing_id):
@@ -45,12 +47,11 @@ def view(thing_id):
         content=content
     )
 
+
 @app.route("/new", methods=['GET', 'POST'])
 def new_thing():
 
-    sended = False
     photo_number = random.randint(10, 999)
-    thing_name = str()
 
     if request.method == 'POST':
         name = request.form['name'].strip()
@@ -59,15 +60,15 @@ def new_thing():
         photo = request.form['photo'].strip()
 
         with sqlite3.connect('database.db') as conn:
-            conn.execute("""
+            cursor = conn.execute("""
                 INSERT INTO thing (
                     name, description, location, photo
-                ) VALUES (?, ? ,? ,?)
-            """, (name, description, location, photo,))
+                ) VALUES (?, ?, ?, ?)
+            """, (name, description, location, photo))
+        
+            flash('Registro cadastrado com sucesso!', 'success')
 
-            flash('Registro cadastrado com sucesso!', 'sucess')
-
-            return redirect(url_from('view', thing_id=cursor.lastrowid))
+            return redirect(url_for('view', thing_id=cursor.lastrowid))
 
     return render_template(
         "new.html",
@@ -86,7 +87,7 @@ def edit(thing_id):
             WHERE status = 'on'
                 AND id = ?
 """, (thing_id,)).fetchone()
-        
+
     if content is None:
         abort(404)
 
@@ -107,15 +108,16 @@ def edit(thing_id):
                 WHERE status = 'on'
                     AND id = ?
 """, (name, description, location, photo, thing_id))
-            
+
         flash('Registro atualizado com sucesso', 'sucesses')
 
         return redirect(url_for('view', thing_id=thing_id))
-    
+
     return render_template(
         'edit.html',
         content=content
     )
+
 
 @app.route('/delete/<int:thing_id>')
 def delete(thing_id):
@@ -144,9 +146,11 @@ def delete(thing_id):
 
         return redirect(url_for('index', thing_id=thing_id))
 
+
 @app.route("/about")
 def about():
     return render_template("about.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
