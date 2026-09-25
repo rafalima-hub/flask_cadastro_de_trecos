@@ -1,41 +1,49 @@
+{#
+templates\_base.html
+Template base
+#}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Trecos</title>
-
-    <link rel="stylesheet" href="static/css/style.css">
 </head>
+
 <body>
-    
-    <header class="cabeçalho">
 
-        <div class="logo">
-            Cadastro de Trecos
-        </div>
-
+    <header>
+        <h1>Cadastro de Trecos</h1>
     </header>
     <hr>
 
-    <nav class="menu">
+    <nav>
         <a href="{{ url_for('index') }}">Início</a>
-        <a href="{{ url_for('new') }}">Novo</a>
+        <a href="{{ url_for('new_thing') }}">Novo</a>
         <a href="{{ url_for('about') }}">Sobre</a>
     </nav>
     <hr>
 
-    <button class="botao">
-        Entrar
-    </button>
-
     <main>
+
+        {# Exibe mensagens "flash" vindas da session #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <p class="alert alert-{{ category }}">
+            {{ message }}
+        </p>
+        {% endfor %}
+        {% endwith %}
+
         {# O conteúdo do template da rota aparece aqui! #}
         {% block main %}{% endblock %}
+
     </main>
     <hr>
 
     <footer>&copy; 2026 Cadastro de Trecos</footer>
 
 </body>
+
 </html>

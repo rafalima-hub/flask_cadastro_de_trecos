@@ -1,4 +1,4 @@
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, flash, redirect, render_template, request, url_for
 import sqlite3
 import random
 
@@ -45,8 +45,8 @@ def view(thing_id):
         content=content
     )
 
-@app.route("/new", methods=['GET', 'POST'])
-def new():
+@app.route("/new", ds=metho['GET', 'POST'])
+def new_thing():
 
     sended = False
     photo_number = random.randint(10, 999)
@@ -65,15 +65,84 @@ def new():
                 ) VALUES (?, ? ,? ,?)
             """, (name, description, location, photo,))
 
-            sended = True
-            thing_name = name
+            flash('Registro cadastrado com sucesso!', 'sucess')
+
+            return redirect(url_from('view', thing_id=cursor.lastrowid))
 
     return render_template(
         "new.html",
-        photo_number=photo_number,
-        thing_name=thing_name,
-        sended=sended
+        photo_number=photo_number
     )
+
+@app.route('/edit/<int:thing_id>', methods=['GET', 'POST'])
+def edit(thing_id):
+
+    with sqlite3.connect('database.db') as conn:
+        conn.row_factory = sqlite3.Row
+
+        content = conn.execute("""
+            SELECT *
+            FROM thing
+            WHERE status = 'on'
+                AND id = ?
+""", (thing_id,)).fetchone()
+        
+    if content is None:
+        abort(404)
+
+    if request.method == 'POST':
+        name = request.form['name'].strip()
+        description = request.form['description'].strip()
+        location = request.form['location'].strip()
+        photo = request.form['photo'].strip()
+
+        with sqlite3.connect('database.db') as conn:
+            conn.execute("""
+                UPDATE thing
+                SET
+                    name = ?,
+                    description = ?,
+                    location = ?,
+                    photo = ?,
+                WHERE status = 'on'
+                    AND id = ?
+""", (name, description, location, photo, thing_id))
+            
+        flash('Registro atualizado com sucesso', 'sucesses')
+
+        return redirect(url_for('view', thing_id=thing_id))
+    
+    return render_template(
+        'edit.html',
+        content=content
+    )
+
+@app.route('/delete/<int:thing_id>')
+def delete(thing_id):
+
+    with sqlite3.connect('database.db') as conn:
+        conn.row_factory = sqlite3.Row
+
+        content = conn.execute("""
+            SELECT id
+            FROM thing
+                WHERE status = 'on'
+                    AND id = ?
+        """, (thing_id,)).fetchone()
+
+        if content is None:
+            abort(404)
+
+        conn.execute("""
+            UPDATE thing 
+                SET status = 'del'
+                WHERE status = 'on'
+                    AND id = ?
+        """, (thing_id,))
+
+        flash('Registro apagado com sucesso!', 'success')
+
+        return redirect(url_for('index', thing_id=thing_id))
 
 @app.route("/about")
 def about():

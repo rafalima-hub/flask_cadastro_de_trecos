@@ -2,6 +2,8 @@
 
 {% block main %}
 
+<section>
+
 <h2>Todos os Trecos</h2>
 
 {% if total > 0 %}
@@ -14,9 +16,11 @@
 {% else %}
     <p>
         Nenhum treco cadastado ainda!
-        <a href="{{ url_for('new_thing') }}">Cadastre um treco</a>
+        <a href="{{ url_for('new') }}">Cadastre um treco</a>
     </p>
 
 {% endif %}
+
+</section>
 
 {% endblock %}
