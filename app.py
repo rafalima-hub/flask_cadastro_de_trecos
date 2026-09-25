@@ -45,7 +45,7 @@ def view(thing_id):
         content=content
     )
 
-@app.route("/new", ds=metho['GET', 'POST'])
+@app.route("/new", methods=['GET', 'POST'])
 def new_thing():
 
     sended = False
