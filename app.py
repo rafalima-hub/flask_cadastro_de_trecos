@@ -4,17 +4,17 @@ import random
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def index():
 
     with sqlite3.connect('database.db') as conn:
         conn.row_factory = sqlite3.Row
+
         contents = conn.execute("""
             SELECT id, name, photo
             FROM thing
-                WHERE status = 'on'
-                ORDER BY created_at
+            WHERE status = 'on'
+            ORDER BY created_at
         """).fetchall()
 
     total = len(contents)
@@ -31,13 +31,14 @@ def view(thing_id):
 
     with sqlite3.connect('database.db') as conn:
         conn.row_factory = sqlite3.Row
+
         content = conn.execute("""
             SELECT *
             FROM thing
-                WHERE status = 'on'
-                AND id = ?
-                ORDER BY created_at
-        """, (thing_id)).fetchone()
+            WHERE status = 'on'
+            AND id = ?
+            ORDER BY created_at
+        """, (thing_id,)).fetchone()
 
     if content is None:
         abort(404)
@@ -54,26 +55,35 @@ def new_thing():
     photo_number = random.randint(10, 999)
 
     if request.method == 'POST':
+
         name = request.form['name'].strip()
         description = request.form['description'].strip()
         location = request.form['location'].strip()
         photo = request.form['photo'].strip()
 
         with sqlite3.connect('database.db') as conn:
+
             cursor = conn.execute("""
                 INSERT INTO thing (
                     name, description, location, photo
-                ) VALUES (?, ?, ?, ?)
+                )
+                VALUES (?, ?, ?, ?)
             """, (name, description, location, photo))
-        
-            flash('Registro cadastrado com sucesso!', 'success')
 
-            return redirect(url_for('view', thing_id=cursor.lastrowid))
+            flash(
+                'Registro cadastrado com sucesso!',
+                'success'
+            )
+
+            return redirect(
+                url_for('view', thing_id=cursor.lastrowid)
+            )
 
     return render_template(
         "new.html",
         photo_number=photo_number
     )
+
 
 @app.route('/edit/<int:thing_id>', methods=['GET', 'POST'])
 def edit(thing_id):
@@ -85,33 +95,46 @@ def edit(thing_id):
             SELECT *
             FROM thing
             WHERE status = 'on'
-                AND id = ?
-""", (thing_id,)).fetchone()
+            AND id = ?
+        """, (thing_id,)).fetchone()
 
     if content is None:
         abort(404)
 
     if request.method == 'POST':
+
         name = request.form['name'].strip()
         description = request.form['description'].strip()
         location = request.form['location'].strip()
         photo = request.form['photo'].strip()
 
         with sqlite3.connect('database.db') as conn:
+
             conn.execute("""
                 UPDATE thing
                 SET
                     name = ?,
                     description = ?,
                     location = ?,
-                    photo = ?,
+                    photo = ?
                 WHERE status = 'on'
-                    AND id = ?
-""", (name, description, location, photo, thing_id))
+                AND id = ?
+            """, (
+                name,
+                description,
+                location,
+                photo,
+                thing_id
+            ))
 
-        flash('Registro atualizado com sucesso', 'sucesses')
+        flash(
+            'Registro atualizado com sucesso!',
+            'success'
+        )
 
-        return redirect(url_for('view', thing_id=thing_id))
+        return redirect(
+            url_for('view', thing_id=thing_id)
+        )
 
     return render_template(
         'edit.html',
@@ -123,28 +146,32 @@ def edit(thing_id):
 def delete(thing_id):
 
     with sqlite3.connect('database.db') as conn:
+
         conn.row_factory = sqlite3.Row
 
         content = conn.execute("""
             SELECT id
             FROM thing
-                WHERE status = 'on'
-                    AND id = ?
+            WHERE status = 'on'
+            AND id = ?
         """, (thing_id,)).fetchone()
 
         if content is None:
             abort(404)
 
         conn.execute("""
-            UPDATE thing 
-                SET status = 'del'
-                WHERE status = 'on'
-                    AND id = ?
+            UPDATE thing
+            SET status = 'del'
+            WHERE status = 'on'
+            AND id = ?
         """, (thing_id,))
 
-        flash('Registro apagado com sucesso!', 'success')
+    flash(
+        'Registro apagado com sucesso!',
+        'success'
+    )
 
-        return redirect(url_for('index', thing_id=thing_id))
+    return redirect(url_for('index'))
 
 
 @app.route("/about")
@@ -154,3 +181,4 @@ def about():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
